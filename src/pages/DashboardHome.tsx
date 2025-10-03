@@ -76,9 +76,13 @@ export const DashboardHome: React.FC = () => {
                 <MiniChart color="#ff00ff" />
               </div>
 
-              <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center justify-between text-sm mb-2">
                 <span className="text-gray-400">Avg load time</span>
                 <span className="text-white font-semibold">{stats.avgLoadTime}ms</span>
+              </div>
+
+              <div className="text-xs text-gray-500">
+                Last updated: {stats.lastUpdated ? new Date(stats.lastUpdated).toLocaleString() : 'Never'}
               </div>
             </div>
           </Link>
@@ -121,9 +125,13 @@ export const DashboardHome: React.FC = () => {
                   <MiniChart color="#00f5ff" />
                 </div>
 
-                <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center justify-between text-sm mb-2">
                   <span className="text-gray-400">Avg load time</span>
                   <span className="text-white font-semibold">{frontpage.responseTime}ms</span>
+                </div>
+
+                <div className="text-xs text-gray-500">
+                  Last updated: {new Date(frontpage.timestamp).toLocaleString()}
                 </div>
               </div>
             </Link>

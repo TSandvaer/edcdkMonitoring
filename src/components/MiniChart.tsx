@@ -10,9 +10,12 @@ export const MiniChart: React.FC<MiniChartProps> = ({ data, color }) => {
   const points = 7;
   const chartData = data || Array.from({ length: points }, () => Math.random() * 40 + 50);
 
-  const width = 400;
-  const height = 80;
-  const padding = 5;
+  const width = 100;
+  const height = 60;
+  const paddingTop = 8;
+  const paddingBottom = 15;
+  const paddingLeft = 25;
+  const paddingRight = 10;
   const max = Math.max(...chartData);
   const min = Math.min(...chartData);
   const range = max - min || 1;
@@ -20,8 +23,8 @@ export const MiniChart: React.FC<MiniChartProps> = ({ data, color }) => {
   // Create smooth curve using quadratic bezier curves
   const createSmoothPath = () => {
     const points = chartData.map((value, index) => {
-      const x = padding + (index / (chartData.length - 1)) * (width - padding * 2);
-      const y = padding + (1 - (value - min) / range) * (height - padding * 2);
+      const x = paddingLeft + (index / (chartData.length - 1)) * (width - paddingLeft - paddingRight);
+      const y = paddingTop + (1 - (value - min) / range) * (height - paddingTop - paddingBottom);
       return { x, y };
     });
 
@@ -43,24 +46,65 @@ export const MiniChart: React.FC<MiniChartProps> = ({ data, color }) => {
 
   const smoothPath = createSmoothPath();
   const dataPoints = chartData.map((value, index) => {
-    const x = padding + (index / (chartData.length - 1)) * (width - padding * 2);
-    const y = padding + (1 - (value - min) / range) * (height - padding * 2);
+    const x = paddingLeft + (index / (chartData.length - 1)) * (width - paddingLeft - paddingRight);
+    const y = paddingTop + (1 - (value - min) / range) * (height - paddingTop - paddingBottom);
     return { x, y };
   });
 
   // Create area path (same as line but closes at bottom)
-  const areaPath = smoothPath + ` L ${width - padding},${height - padding} L ${padding},${height - padding} Z`;
+  const chartBottom = height - paddingBottom;
+  const areaPath = smoothPath + ` L ${width - paddingRight},${chartBottom} L ${paddingLeft},${chartBottom} Z`;
+
+  // Y-axis labels
+  const yAxisValues = [Math.round(max), Math.round((max + min) / 2), Math.round(min)];
+  const yAxisPositions = [paddingTop, (paddingTop + chartBottom) / 2, chartBottom];
 
   const gradientId = `gradient-${color.replace('#', '')}`;
 
   return (
-    <svg width="100%" height="80" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMid meet" className="w-full">
+    <svg width="100%" height="60" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" className="w-full">
       <defs>
         <linearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stopColor={color} stopOpacity="0.4" />
           <stop offset="100%" stopColor={color} stopOpacity="0.05" />
         </linearGradient>
       </defs>
+
+      {/* Y-axis grid lines and labels */}
+      {yAxisValues.map((value, index) => (
+        <g key={index} opacity="0.3">
+          <line
+            x1={paddingLeft}
+            y1={yAxisPositions[index]}
+            x2={width - paddingRight}
+            y2={yAxisPositions[index]}
+            stroke="#ffffff"
+            strokeWidth="0.2"
+            strokeDasharray="1,1"
+          />
+          <text
+            x={paddingLeft - 3}
+            y={yAxisPositions[index]}
+            fontSize="3"
+            fill="#888888"
+            textAnchor="end"
+            dominantBaseline="middle"
+          >
+            {value}
+          </text>
+        </g>
+      ))}
+
+      {/* X-axis */}
+      <line
+        x1={paddingLeft}
+        y1={chartBottom}
+        x2={width - paddingRight}
+        y2={chartBottom}
+        stroke="#ffffff"
+        strokeWidth="0.2"
+        opacity="0.3"
+      />
 
       {/* Area fill */}
       <path
@@ -73,9 +117,10 @@ export const MiniChart: React.FC<MiniChartProps> = ({ data, color }) => {
         d={smoothPath}
         fill="none"
         stroke={color}
-        strokeWidth="2"
+        strokeWidth="0.8"
         strokeLinecap="round"
         strokeLinejoin="round"
+        vectorEffect="non-scaling-stroke"
       />
 
       {/* Draw dots on each data point */}
@@ -84,9 +129,9 @@ export const MiniChart: React.FC<MiniChartProps> = ({ data, color }) => {
           key={index}
           cx={point.x}
           cy={point.y}
-          r="3.5"
+          r="1.2"
           fill={color}
-          style={{ filter: `drop-shadow(0 0 4px ${color})` }}
+          style={{ filter: `drop-shadow(0 0 2px ${color})` }}
         />
       ))}
     </svg>

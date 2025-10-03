@@ -4,8 +4,8 @@ import { useMonitoring } from '../hooks/useMonitoring';
 import { MiniChart } from '../components/MiniChart';
 
 export const DashboardHome: React.FC = () => {
-  const { currentData, loading } = useMonitoring('week');
-  const { currentData: frontpageData, loading: frontpageLoading } = useMonitoring('week', 'frontpage-monitoring');
+  const { currentData, historicalData, loading } = useMonitoring('week');
+  const { currentData: frontpageData, historicalData: frontpageHistoricalData, loading: frontpageLoading } = useMonitoring('week', 'frontpage-monitoring');
 
   const calculateStats = () => {
     if (currentData.length === 0) {
@@ -39,6 +39,39 @@ export const DashboardHome: React.FC = () => {
   const stats = calculateStats();
   const frontpage = frontpageData[0];
 
+  // Get last 1 hour of data for charts (6 data points, one every 10 minutes)
+  const sampleChartData = (data: typeof historicalData) => {
+    if (data.length === 0) return { values: [], timestamps: [] };
+
+    const now = Date.now();
+    const oneHourAgo = now - (60 * 60 * 1000);
+
+    // Filter data from last hour
+    const recentData = data.filter(item => item.timestamp >= oneHourAgo);
+
+    if (recentData.length === 0) return { values: [], timestamps: [] };
+
+    // Take up to 6 most recent data points (last hour at 10-min intervals)
+    const sampledData = [];
+    const sampledTimestamps = [];
+    const maxPoints = 6;
+    const startIndex = Math.max(0, recentData.length - maxPoints);
+
+    for (let i = startIndex; i < recentData.length; i++) {
+      const item = recentData[i];
+
+      // Calculate average response time for this data point
+      const avgResponseTime = item.checks.reduce((sum, check) => sum + check.responseTime, 0) / item.checks.length;
+      sampledData.push(Math.round(avgResponseTime));
+      sampledTimestamps.push(item.timestamp);
+    }
+
+    return { values: sampledData, timestamps: sampledTimestamps };
+  };
+
+  const indexPagesChartData = sampleChartData(historicalData);
+  const frontpageChartData = sampleChartData(frontpageHistoricalData);
+
   return (
     <div className="p-8">
       <div className="mb-8">
@@ -61,7 +94,7 @@ export const DashboardHome: React.FC = () => {
 
               {/* Background Chart */}
               <div className="absolute inset-0 opacity-30">
-                <MiniChart color="#ff00ff" />
+                <MiniChart color="#ff00ff" data={indexPagesChartData.values} timestamps={indexPagesChartData.timestamps} />
               </div>
 
               <div className="flex items-start justify-between mb-6 relative z-10">
@@ -105,7 +138,7 @@ export const DashboardHome: React.FC = () => {
 
                 {/* Background Chart */}
                 <div className="absolute inset-0 opacity-30">
-                  <MiniChart color="#00f5ff" />
+                  <MiniChart color="#00f5ff" data={frontpageChartData.values} timestamps={frontpageChartData.timestamps} />
                 </div>
 
                 <div className="flex items-start justify-between mb-6 relative z-10">

@@ -2,13 +2,27 @@ import React from 'react';
 
 interface MiniChartProps {
   data?: number[];
+  timestamps?: number[];
   color: string;
 }
 
-export const MiniChart: React.FC<MiniChartProps> = ({ data, color }) => {
+export const MiniChart: React.FC<MiniChartProps> = ({ data, timestamps, color }) => {
   // Generate smooth random sparkline data for visual effect if no data provided
-  const points = 7;
+  const points = 6;
   const chartData = data || Array.from({ length: points }, () => Math.random() * 40 + 50);
+
+  // Generate x-axis labels from timestamps (showing minutes)
+  const generateXAxisLabels = () => {
+    if (!timestamps || timestamps.length === 0) {
+      return ['-60m', '-50m', '-40m', '-30m', '-20m', '-10m'];
+    }
+
+    const now = Date.now();
+    return timestamps.map(ts => {
+      const minutesAgo = Math.round((now - ts) / (60 * 1000));
+      return `-${minutesAgo}m`;
+    });
+  };
 
   const width = 200;
   const height = 100;
@@ -59,6 +73,9 @@ export const MiniChart: React.FC<MiniChartProps> = ({ data, color }) => {
   const yAxisValues = [Math.round(max), Math.round((max + min) / 2), Math.round(min)];
   const yAxisPositions = [paddingTop, (paddingTop + chartBottom) / 2, chartBottom];
 
+  // X-axis labels (time points)
+  const xAxisLabels = generateXAxisLabels();
+
   const gradientId = `gradient-${color.replace('#', '')}`;
 
   return (
@@ -72,21 +89,21 @@ export const MiniChart: React.FC<MiniChartProps> = ({ data, color }) => {
 
       {/* Y-axis grid lines and labels */}
       {yAxisValues.map((value, index) => (
-        <g key={index} opacity="0.3">
+        <g key={index} opacity="0.5">
           <line
             x1={paddingLeft}
             y1={yAxisPositions[index]}
             x2={width - paddingRight}
             y2={yAxisPositions[index]}
             stroke="#ffffff"
-            strokeWidth="0.2"
-            strokeDasharray="1,1"
+            strokeWidth="0.5"
+            strokeDasharray="2,2"
           />
           <text
-            x={paddingLeft - 3}
+            x={paddingLeft - 4}
             y={yAxisPositions[index]}
-            fontSize="3"
-            fill="#888888"
+            fontSize="6"
+            fill="#aaaaaa"
             textAnchor="end"
             dominantBaseline="middle"
           >
@@ -102,9 +119,24 @@ export const MiniChart: React.FC<MiniChartProps> = ({ data, color }) => {
         x2={width - paddingRight}
         y2={chartBottom}
         stroke="#ffffff"
-        strokeWidth="0.2"
-        opacity="0.3"
+        strokeWidth="0.5"
+        opacity="0.5"
       />
+
+      {/* X-axis labels */}
+      {dataPoints.map((point, index) => (
+        <text
+          key={index}
+          x={point.x}
+          y={chartBottom + 12}
+          fontSize="6"
+          fill="#aaaaaa"
+          textAnchor="middle"
+          opacity="0.9"
+        >
+          {xAxisLabels[index]}
+        </text>
+      ))}
 
       {/* Area fill */}
       <path

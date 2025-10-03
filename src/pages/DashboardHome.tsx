@@ -59,7 +59,12 @@ export const DashboardHome: React.FC = () => {
               {/* Green indicator for OK status */}
               <div className="absolute top-0 left-0 w-2 h-full bg-green-500"></div>
 
-              <div className="flex items-start justify-between mb-6">
+              {/* Background Chart */}
+              <div className="absolute inset-0 opacity-30">
+                <MiniChart color="#ff00ff" />
+              </div>
+
+              <div className="flex items-start justify-between mb-6 relative z-10">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
@@ -72,17 +77,15 @@ export const DashboardHome: React.FC = () => {
                 </div>
               </div>
 
-              <div className="mb-4">
-                <MiniChart color="#ff00ff" />
-              </div>
+              <div className="relative z-10 mt-auto">
+                <div className="flex items-center justify-between text-sm mb-2">
+                  <span className="text-gray-400">Avg load time</span>
+                  <span className="text-white font-semibold">{stats.avgLoadTime}ms</span>
+                </div>
 
-              <div className="flex items-center justify-between text-sm mb-2">
-                <span className="text-gray-400">Avg load time</span>
-                <span className="text-white font-semibold">{stats.avgLoadTime}ms</span>
-              </div>
-
-              <div className="text-xs text-gray-500">
-                Last updated: {stats.lastUpdated ? new Date(stats.lastUpdated).toLocaleString() : 'Never'}
+                <div className="text-xs text-gray-500">
+                  Last updated: {stats.lastUpdated ? new Date(stats.lastUpdated).toLocaleString() : 'Never'}
+                </div>
               </div>
             </div>
           </Link>
@@ -100,7 +103,12 @@ export const DashboardHome: React.FC = () => {
                 {/* Status indicator */}
                 <div className={`absolute top-0 left-0 w-2 h-full ${frontpage.success ? 'bg-green-500' : 'bg-red-500'}`}></div>
 
-                <div className="flex items-start justify-between mb-6">
+                {/* Background Chart */}
+                <div className="absolute inset-0 opacity-30">
+                  <MiniChart color="#00f5ff" />
+                </div>
+
+                <div className="flex items-start justify-between mb-6 relative z-10">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       {frontpage.success ? (
@@ -121,17 +129,15 @@ export const DashboardHome: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="mb-4">
-                  <MiniChart color="#00f5ff" />
-                </div>
+                <div className="relative z-10 mt-auto">
+                  <div className="flex items-center justify-between text-sm mb-2">
+                    <span className="text-gray-400">Avg load time</span>
+                    <span className="text-white font-semibold">{frontpage.responseTime}ms</span>
+                  </div>
 
-                <div className="flex items-center justify-between text-sm mb-2">
-                  <span className="text-gray-400">Avg load time</span>
-                  <span className="text-white font-semibold">{frontpage.responseTime}ms</span>
-                </div>
-
-                <div className="text-xs text-gray-500">
-                  Last updated: {new Date(frontpage.timestamp).toLocaleString()}
+                  <div className="text-xs text-gray-500">
+                    Last updated: {new Date(frontpage.timestamp).toLocaleString()}
+                  </div>
                 </div>
               </div>
             </Link>
@@ -150,7 +156,12 @@ export const DashboardHome: React.FC = () => {
           <div className="card-gradient rounded-2xl p-8 border border-gray-700 relative overflow-hidden opacity-60">
             <div className="absolute top-0 left-0 w-2 h-full bg-gray-600"></div>
 
-            <div className="flex items-start justify-between mb-6">
+            {/* Background Chart */}
+            <div className="absolute inset-0 opacity-30">
+              <MiniChart color="#ffeb3b" />
+            </div>
+
+            <div className="flex items-start justify-between mb-6 relative z-10">
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <svg className="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
@@ -163,13 +174,15 @@ export const DashboardHome: React.FC = () => {
               </div>
             </div>
 
-            <div className="mb-4">
-              <MiniChart color="#ffeb3b" />
-            </div>
+            <div className="relative z-10 mt-auto">
+              <div className="flex items-center justify-between text-sm mb-2">
+                <span className="text-gray-600">Avg load time</span>
+                <span className="text-gray-600 font-semibold">-- ms</span>
+              </div>
 
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Avg load time</span>
-              <span className="text-gray-600 font-semibold">-- ms</span>
+              <div className="text-xs text-gray-600">
+                Last updated: Never
+              </div>
             </div>
           </div>
         </div>

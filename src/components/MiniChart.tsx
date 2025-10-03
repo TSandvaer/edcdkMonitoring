@@ -10,12 +10,12 @@ export const MiniChart: React.FC<MiniChartProps> = ({ data, color }) => {
   const points = 7;
   const chartData = data || Array.from({ length: points }, () => Math.random() * 40 + 50);
 
-  const width = 100;
-  const height = 60;
-  const paddingTop = 8;
-  const paddingBottom = 15;
-  const paddingLeft = 25;
-  const paddingRight = 10;
+  const width = 200;
+  const height = 100;
+  const paddingTop = 10;
+  const paddingBottom = 20;
+  const paddingLeft = 30;
+  const paddingRight = 15;
   const max = Math.max(...chartData);
   const min = Math.min(...chartData);
   const range = max - min || 1;
@@ -62,7 +62,7 @@ export const MiniChart: React.FC<MiniChartProps> = ({ data, color }) => {
   const gradientId = `gradient-${color.replace('#', '')}`;
 
   return (
-    <svg width="100%" height="60" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" className="w-full">
+    <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMid meet" className="w-full h-full">
       <defs>
         <linearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stopColor={color} stopOpacity="0.4" />
